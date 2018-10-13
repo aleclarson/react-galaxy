@@ -1,4 +1,4 @@
-import { __$observers, Observable } from './observable'
+import { __$observers, __$willChange, Observable } from './observable'
 import { $selector, runSelector } from './selector'
 
 const { isArray } = Array
