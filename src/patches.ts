@@ -1,6 +1,6 @@
 import { Patch } from 'immer'
 import { Hash, Reactive } from './common'
-import { Observable } from './observable'
+import { __$willChange, Observable } from './observable'
 
 // These exports are used often enough.
 export { Draft, Patch } from 'immer'
@@ -24,7 +24,11 @@ export class PatchSpy<T extends Hash = any> {
     this.context.removeObserver(this)
   }
 
-  observer(target: Observable, prop: string | number | null, newValue: any) {
+  [__$willChange](
+    target: Observable,
+    prop: string | number | null,
+    newValue: any
+  ) {
     if (prop !== null) {
       this.onPatch(
         {

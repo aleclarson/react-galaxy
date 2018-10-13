@@ -1,5 +1,5 @@
 import { Hash } from './common'
-import { __$observers, Observable } from './observable'
+import { __$observers, __$willChange, Observable } from './observable'
 import { Slot } from './slot'
 
 /** @internal Observable immutable object */
@@ -11,17 +11,6 @@ export class Star<T extends Hash = any> extends Observable {
     super()
     this.value = base || Object.create(null)
     this._slots = undefined
-  }
-
-  willChange(prop: string | null, newValue: any) {
-    if (prop !== null) {
-      // Notify slots first
-      let slot = this._slots && this._slots.get(prop)
-      if (slot) slot.willChange(newValue)
-    }
-
-    let arr = this[__$observers]
-    if (arr) for (let obj of arr) obj.observer(this, prop, newValue)
   }
 
   /** Returns an observable for the given property name */
@@ -42,5 +31,17 @@ export class Star<T extends Hash = any> extends Observable {
         this._slots = undefined
       }
     }
+  }
+
+  [__$willChange](prop: string | null, newValue: any) {
+    if (prop !== null) {
+      // Notify slots first
+      let slot = this._slots && this._slots.get(prop)
+      if (slot) slot[__$willChange](newValue)
+    }
+
+    let arr = this[__$observers]
+    let method = __$willChange as any
+    if (arr) for (let obj of arr) obj[method](this, prop, newValue)
   }
 }

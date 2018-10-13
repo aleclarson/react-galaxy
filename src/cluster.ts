@@ -1,4 +1,4 @@
-import { __$observers, Observable } from './observable'
+import { __$observers, __$willChange, Observable } from './observable'
 
 /** @internal Observable immutable array */
 export class Cluster<T = any> extends Observable {
@@ -9,8 +9,9 @@ export class Cluster<T = any> extends Observable {
     this.value = base || []
   }
 
-  willChange(index: number | null, newValue: any) {
+  [__$willChange](index: number | null, newValue: any) {
     let arr = this[__$observers]
-    if (arr) for (let obj of arr) obj.observer(this, index, newValue)
+    let method = __$willChange as any
+    if (arr) for (let obj of arr) obj[method](this, index, newValue)
   }
 }

@@ -1,5 +1,5 @@
 import { Hash } from './common'
-import { __$observable } from './observable'
+import { __$observable, __$willChange } from './observable'
 import { reactive } from './reactive'
 import { $selector, spyOnAccess } from './selector'
 import { Star } from './star'
@@ -75,7 +75,7 @@ export class Galaxy<T extends Hash = any> {
   }
 
   /** @internal */
-  private observer(star: Star<T>, prop: string | null, newValue: any) {
+  [__$willChange](star: Star<T>, prop: string | null, newValue: any) {
     if (prop == null) {
       let index = this._values.indexOf(star.value)
       let nextKey = this._keyof(newValue)

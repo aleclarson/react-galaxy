@@ -1,5 +1,10 @@
 import { Hash } from './common'
-import { __$observable, __$observers, Observable } from './observable'
+import {
+  __$observable,
+  __$observers,
+  __$willChange,
+  Observable,
+} from './observable'
 import { Star } from './star'
 
 const def = Object.defineProperty
@@ -32,16 +37,17 @@ export class Slot<
   }
 
   /** @internal */
-  willChange(newValue: any) {
-    let arr = this[__$observers]
-    if (arr) for (let obj of arr) obj.observer(this, null, newValue)
-  }
-
-  /** @internal */
   removeObserver(observer: any) {
     super.removeObserver(observer)
     if (!this[__$observers]) {
       this.context.removeSlot(this)
     }
+  }
+
+  /** @internal */
+  [__$willChange](newValue: any) {
+    let arr = this[__$observers]
+    let method = __$willChange as any
+    if (arr) for (let obj of arr) obj[method](this, null, newValue)
   }
 }

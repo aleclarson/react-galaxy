@@ -10,7 +10,7 @@ import {
   Reactive,
 } from './common'
 import { Derived } from './derived'
-import { __$observable } from './observable'
+import { __$observable, __$willChange } from './observable'
 import { Draft, PatchListener, PatchSpy } from './patches'
 import { Slot } from './slot'
 import { Star } from './star'
@@ -185,7 +185,7 @@ function makeObservable<T extends Hash>(base: T) {
 
 /** Swap the state of an observable */
 function snapshot(state: any, observable: any) {
-  observable.willChange(null, state)
+  observable[__$willChange](null, state)
 
   observable.value[__$observable] = undefined
   observable.value = state
@@ -213,7 +213,7 @@ function copyMerge<T extends Hash>(
       copy = getProto(value) ? {} : Object.create(null)
       copy[prop] = value
       if (observable) {
-        observable.willChange(prop, value)
+        observable[__$willChange](prop, value)
       }
     }
   }
@@ -236,7 +236,7 @@ setHook('setProperty', (draft: Hash, prop: string | number, newValue: any) => {
   if (observable) {
     // Shallow changes only.
     if (newValue && observable == newValue[__$observable]) return
-    observable.willChange(prop, newValue)
+    observable[__$willChange](prop, newValue)
   }
 })
 

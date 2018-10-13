@@ -71,13 +71,14 @@ export class Reader extends Observable {
     this._derived.length = 0
   }
 
-  private observer(target: any) {
+  [__$willChange](target: any) {
     let index = this._derived.indexOf(target)
     if (index > -1) {
       this.value[index] = target.value
 
       let arr = this[__$observers]
-      if (arr) for (let obj of arr) obj.observer(this, index, target.value)
+      let method = __$willChange as any
+      if (arr) for (let obj of arr) obj[method](this, index, target.value)
     }
   }
 }

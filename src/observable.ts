@@ -10,6 +10,9 @@ export const __$observers = Symbol('observers')
 /** Unique symbol for the raw observable */
 export const __$observable: any = Symbol('observable')
 
+/** Unique symbol for the change handler */
+export const __$willChange = Symbol('willChange')
+
 /** Returns an observable (if the given value is reactive) */
 export function $observable<T extends Hash>(value: T): Reactive<T> | undefined {
   return value ? value[__$observable] : undefined

@@ -43,7 +43,7 @@ export class Derived<T> extends Observable {
     return result
   }
 
-  private observer() {
+  protected [__$willChange]() {
     let value = this.compute()
     if (value !== this.value) {
       let arr = this[__$observers]
