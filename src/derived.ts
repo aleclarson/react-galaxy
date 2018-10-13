@@ -4,6 +4,17 @@ import { $selector, runSelector } from './selector'
 const { isArray } = Array
 const emptySet = new Set()
 
+/**
+ * Unwrap all observable values.
+ *
+ * This is required to ensure the selector arguments never go stale.
+ */
+const getObservable = (arg: any) => {
+  let observable = arg && arg[__$observable]
+  if (observable) return observable
+  return isObject(arg) ? watch(arg) : arg
+}
+
 export class Derived<T> extends Observable {
   private _args: any[]
   private _selector: (...args: any[]) => T
@@ -12,7 +23,7 @@ export class Derived<T> extends Observable {
 
   constructor(args: any[], selector: (...args: any[]) => T) {
     super()
-    this._args = args
+    this._args = args.map(getObservable)
     this._selector = selector
     this._observed = emptySet
     this.value = this.compute()
